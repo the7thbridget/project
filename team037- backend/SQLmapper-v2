@@ -1,0 +1,85 @@
+-- ==========Store=========
+-- makeStore
+INSERT INTO Store (store_name, revenue) VALUES (?, ?);
+-- findStoreIdByName
+SELECT store_id from Store WHERE store_name = ?;
+-- updateRevenue
+UPDATE Store SET revenue = ? WHERE store_name = ?;
+-- Display store
+SELECT * FROM Store ORDER BY store_name ASC;
+-- updatestorerevenue
+UPDATE Store SET revenue = revenue + (SELECT SUM(quantity * unit_price) FROM Order_2_item WHERE order_id = ?) WHERE store_name = ?;
+
+
+-- ===========Item============
+-- addItem
+INSERT INTO Item (item_name, unit_weight, store_id) VALUES (?, ?, ?);
+-- displayItemsByStoreName
+SELECT item_name, unit_weight FROM Item WHERE store_id = ?;
+
+
+-- ===========Pilot=============
+-- addPilot
+INSERT INTO Pilot (account, firstName, lastName, phoneNumber, taxID, licenseID, experience) VALUES (?, ?, ?, ?, ?, ?, ?);
+-- TODO: User?
+INSERT INTO User (username, password, salt, user_type) VALUES (?, ?, ?, ?);
+-- display
+SELECT * FROM Pilot ORDER BY account ASC;
+-- updateExperience
+UPDATE Pilot SET experience = experience + 1 WHERE pilot_id = ?; 
+
+
+-- ================Drone================
+-- addDrone
+INSERT INTO Drone (drone_identifier, store_id, max_capacity, max_trip) VALUES (?, ?, ?, ?);
+UPDATE Drone SET remaining_trip = max_trip WHERE remaining_trip IS NULL;
+-- findDroneByStoreId
+SELECT drone_identifier, max_capacity, remaining_trip, pilot FROM Drone WHERE store_id = ? ORDER BY drone_identifier ASC;
+-- flyDrone
+UPDATE Drone SET pilot = ? WHERE store_id = ? AND drone_identifier = ?;
+-- findNumOfOrders
+SELECT COUNT(*) FROM Order WHERE drone_id = ? AND `status` = 'in delivery';
+-- findRemainingCapacity
+SELECT (max_capacity - (SELECT SUM(quantity * unit_weight) FROM Order o JOIN Order_2_item o2i ON .order_id = o2i.order_id JOIN Item i ON o2i.item_id = i.item_id WHERE drone_id = ? AND `status` = 'in delivery')) FROM Drone WHERE drone_id = ?;
+-- updateRemainingTrip
+UPDATE Drone SET remaining_trip = remaining_trip - 1 WHERE drone_id = ?;
+-- updateRemainingCapacity
+-- ? not in table
+
+
+-- ===========Customer==========
+-- addCustomerToUser
+INSERT INTO User (username, password, salt, user_type) VALUES (?, ?, ?, ?);
+-- addCustomerToActiveCustomer
+INSERT INTO Active_customer (user_id, rating, credit, last_login, first_name, last_name, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?);
+-- findAllCustomer
+SELECT CONCAT(first_name, '_', last_name), phone_number, rating, credit FROM Active_customer INNER JOIN User on Active_customer.user_id = User.user_id ORDER BY User.username ASC;
+-- updateCredit
+UPDATE Active_customer SET credit = credit - (SELECT SUM(unit_price * quantity) FROM Order_2_item WHERE order_id = ?) WHERE user_id = ?
+-- find customer_id from username
+SELECT active_customer_id FROM Active_customer INNER JOIN User U on Active_customer.user_id = U.user_id WHERE U.username = ?;
+-- Archive inactive customer
+BEGIN TRANSACTION;
+INSERT INTO Archived_customer (user_id, rating, credit, last_login, first_name, last_name, phone_number) 
+SELECT user_id, rating, credit, last_login, first_name, last_name, phone_number FROM Active_customer WHERE DATEDIFF(CURRENT_DATE(), last_login) > 180;
+DELETE FROM Active_customer WHERE DATEDIFF(CURRENT_DATE(), last_login) > 180;
+
+
+-- ============Order==========
+-- addOrder
+INSERT INTO `Order` (store_id, drone_id, customer_id, order_name, create_date) VALUES (?, ?, ?, ?, CURRENT_DATE());
+-- requestItem
+INSERT INTO Order_2_item (store_id, order_id, item_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?);
+-- findOrderIdByStoreName
+SELECT order_name, item_name, quantity, (quantity * unit_price) AS total_cost, (quantity * unit_price) AS total_weight FROM `Order` o JOIN Order_2_item o2i ON o.order_id = o2i.order_id JOIN item i ON o2i.item_id = i.item_id WHERE store_id IN (SELECT store_id FROM Store WHERE store_name = ?);
+-- changeOrderStatus
+UPDATE `Order` SET `status` = `completed` AND close_date = ? WHERE order_id = ? AND store_id = ?;
+-- findOrderCredit
+SELECT SUM(quantity * unit_price) FROM Order_2_item WHERE order_id = ?;
+-- findOrderWeight
+SELECT SUM(quantity * unit_weight) FROM Order_2_item o2i JOIN Item i ON o2i.item_id = i.item_id WHERE order_id = ?;
+-- cancelOrderFromOrder
+DELETE FROM Order_2_item WHERE order_id = ?;
+DELETE FROM `Order`  WHERE order_id = ?;
+
+
