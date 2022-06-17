@@ -1,0 +1,27 @@
+{
+    "userType": 0,
+    "msg": "success",
+    "code": 200,
+    "user": [
+        {
+            "username": "notLoggedIn",
+            "password": "333-888-8888",
+            "userType": 0
+        },
+        {
+            "username": "AdminUser",
+            "password": "333-888-8888",
+            "userType": 1
+        },
+        {
+            "username": "EmployeeUser",
+            "password": "333-888-8888",
+            "userType": 1
+        },
+        {
+            "username": "CustomerUser",
+            "password": "333-888-8888",
+            "userType": 1
+        }
+    ]
+}

@@ -1,0 +1,31 @@
+{
+    "msg": "success",
+    "code": 200,
+    "items": [
+        {
+            "storeName": "kroger",
+            "itemName": "pot_roast",
+            "weight": 30000
+        },
+        {
+            "storeName": "kroger",
+            "itemName": "beer",
+            "weight": 20000
+        },
+        {
+            "storeName": "walmart",
+            "itemName": "wine",
+            "weight": 80000
+        },
+        {
+            "storeName": "walmart",
+            "itemName": "noodles",
+            "weight": 18000
+        },
+        {
+            "storeName": "walmart",
+            "itemName": "pepper",
+            "weight": 22000
+        }
+    ]
+}

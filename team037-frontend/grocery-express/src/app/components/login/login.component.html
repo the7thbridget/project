@@ -1,0 +1,119 @@
+<div class="main-content">
+
+  <div class="wrapper fadeInDown">
+    <div id="formContent">
+      <!-- Tabs Titles -->
+
+      <!-- Icon -->
+      <div class="fadeIn first">
+        <img src="../../../favicon.ico" id="icon" alt="User Icon" />
+      </div>
+
+      <!--User Profile-->
+      <div *ngIf="isLoggedin">
+        <h1>User: {{loggedUser}}</h1> <br>
+        <h1>Type: {{loggedType}}</h1>
+      </div>
+
+      <!-- Login Buttons -->
+      <!-- <form *ngIf="userType==0"> -->
+      <form *ngIf="showMock">
+        <input type="submit" class="fadeIn fourth" (click)="loginAsAdmin()" routerLink="/stores" value="Admin Log In">
+        <input type="submit" class="fadeIn fourth" (click)="loginAsEmployee()" routerLink="/stores"
+          value="Employee Log In">
+        <input type="submit" class="fadeIn fourth" (click)="loginAsCustomer()" routerLink="/stores"
+          value="Customer Log In">
+      </form>
+
+      <!-- Login Form -->
+      <form *ngIf="showLogin && !isLoggedin" #loginForm="ngForm" (submit)="login(loginForm);reloadpage();">
+        <input type="text" id="login" class="fadeIn second" name="username" placeholder="username" ngModel>
+        <input type="password" id="password" class="fadeIn third" name="password" placeholder="password" ngModel>
+        <div class="fadeIn third select-type">
+          <div class="form-check">
+            <input class="form-check-input" value="1" type="radio" name="logintype" id="logintype1" checked ngModel>
+            <label class="form-check-label" for="logintype1">
+              Administrator
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" value="2" type="radio" name="logintype" id="logintype2" ngModel>
+            <label class="form-check-label" for="logintype2">
+              Employee
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" value="3" type="radio" name="logintype" id="logintype3" ngModel>
+            <label class="form-check-label" for="usertype2">
+              Customer
+            </label>
+          </div>
+        </div>
+        <input type="submit" class="fadeIn fourth" value="Log In">
+      </form>
+
+      <!-- success text -->
+      <div *ngIf="errCode!=200 && errCode!=0 && loginClicked" class="alert alert-danger" role="alert">
+        Failed to login! {{errMsg}}
+      </div>
+      <div *ngIf="errCode==200 && loginClicked" class="alert alert-success" role="alert">
+        Login success!
+      </div>
+      <div *ngIf="errCode!=200 && errCode!=0 && registerClicked" class="alert alert-danger" role="alert">
+        Failed to register! {{errMsg}}
+      </div>
+      <div *ngIf="errCode==200 && registerClicked" class="alert alert-success" role="alert">
+        Register success!
+      </div>
+
+      <!-- Register Form -->
+      <form *ngIf="showRegister && !isLoggedin" #registerForm="ngForm" (submit)="register(registerForm)">
+        <input type="text" id="login" class="fadeIn second" name="username" placeholder="New User" ngModel>
+        <input type="password" id="password" class="fadeIn third" name="password" placeholder="password" ngModel>
+        <div class="fadeIn third select-type">
+          <div class="form-check">
+            <input class="form-check-input" value="1" type="radio" name="logintype" id="logintype1" checked ngModel>
+            <label class="form-check-label" for="logintype1">
+              Administrator
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" value="2" type="radio" name="logintype" id="logintype2" ngModel>
+            <label class="form-check-label" for="logintype2">
+              Employee
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" value="3" type="radio" name="logintype" id="logintype3" ngModel>
+            <label class="form-check-label" for="usertype2">
+              Customer
+            </label>
+          </div>
+        </div>
+        <input type="submit" class="fadeIn fourth" value="Register">        
+      </form>
+      <div *ngIf="registerSuccess && showRegister" id="formFooter">
+        <button type="button" class="btn btn-success" (click)="loadLogin()">Login Now</button>
+      </div>
+      <div *ngIf="!registerSuccess && showRegister" id="formFooter">
+        <button type="button" class="btn btn-primary fadeIn fourth" (click)="loadLogin()">Go Back to Login</button>
+      </div>
+
+      <!-- REGISTER BUTTON -->
+      <div *ngIf="showLogin && !isLoggedin" id="formFooter">
+        <button type="button" class="btn btn-warning inline fadeIn fourth" (click)="loadRegister()">Register</button>
+      </div>
+
+      <!-- LOGOUT BUTTON -->
+      <div *ngIf="showLogin && isLoggedin" id="formFooter">
+        <button type="button" class="btn btn-warning inline fadeIn fourth" (click)="logout()">Log out</button>
+      </div>
+
+      <!-- LOGOUT BUTTON -->
+      <div *ngIf="showMock && userType != 0" id="formFooter">
+        <button type="button" class="btn btn-warning inline fadeIn" (click)="logout()">Log out</button>
+      </div>
+
+    </div>
+  </div>
+</div>

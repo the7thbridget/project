@@ -1,0 +1,26 @@
+{
+    "msg": "success",
+    "code": 200,
+    "pilots": [
+        {
+            "user_id": "ffig8",
+            "first_name": "Finneas",
+            "last_name": "Fig",
+            "phone": "888-888-8888",
+            "tax_id": "890-12-3456",
+            "license": "panam_10",
+            "drone_id": "1",
+            "experience": 33
+        },
+        {
+            "user_id": "ggrape17",
+            "first_name": "Gillian",
+            "last_name": "Grape",
+            "phone": "999-888-8888",
+            "tax_id": "234-56-7890",
+            "license": "twa_21",
+            "drone_id": "2",
+            "experience": 31
+        }
+    ]
+}

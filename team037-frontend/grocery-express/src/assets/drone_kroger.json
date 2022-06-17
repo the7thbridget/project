@@ -1,0 +1,18 @@
+{
+    "msg": "kroger",
+    "code": 200,
+    "drones": [
+        {
+            "drone_id": 1,
+            "drone_identifier": "Drone A",
+            "store_id": 1,
+            "max_capacity": 40,
+            "max_trip": 3,
+            "pilot_id": 1,
+            "pilot_name": "Finneas Fig",
+            "remaining_trip": 3,
+            "num_of_order": 2,
+            "remaining_capacity": 20
+        }
+    ]
+}

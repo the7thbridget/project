@@ -1,0 +1,16 @@
+{
+    "msg": "success",
+    "code": 200,
+    "items": [
+        {
+            "storeName": "walmart",
+            "itemName": "tomato",
+            "weight": 18000
+        },
+        {
+            "storeName": "walmart",
+            "itemName": "pepper",
+            "weight": 22000
+        }
+    ]
+}

@@ -1,0 +1,93 @@
+<!-- Copyright 2021, Team037 GaTech-OMSCS-CS6310-21Fall -->
+<div class="page-wrapper">
+
+  <!-- MENU SIDEBAR-->
+  <aside class="menu-sidebar d-none d-lg-block">
+    <div class="logo">
+      <a href="/login">
+        <img src="assets/images/logo.png" alt="Grocery-express" class="img-responsive" width="50" height="50">
+      </a>
+    </div>
+    <div class="menu-sidebar-content js-scrollbar1">
+      <nav class="navbar-sidebar">
+        <ul class="list-unstyled navbar-list">
+          <li>
+            <button *ngIf="userType != 0" type="button" class="button-divider btn btn-outline-primary btn-lg btn-block" routerLink="/stores" routerLinkActive="active-link">Stores</button>
+            <button *ngIf="userType == 0" type="button" class="button-divider btn btn-secondary btn-lg btn-block" routerLink="/stores" routerLinkActive="active-link" disabled>Stores</button>
+          </li>
+          <li *ngIf="userType ==1 || userType ==2">
+            <button type="button" class="button-divider btn btn-outline-primary btn-lg btn-block" routerLink="/pilots" routerLinkActive="active-link">Pilots</button>            
+          </li>
+          <li *ngIf="userType ==1 || userType ==2">
+            <button  type="button" class="button-divider btn btn-outline-primary btn-lg btn-block" routerLink="/customers" routerLinkActive="active-link">Customers</button>
+            
+          </li>
+          <li *ngIf="userType == 1">
+            <button type="button" class="button-divider btn btn-outline-primary btn-lg btn-block" routerLink="/settings" routerLinkActive="active-link">Settings</button>
+            <!-- <a routerLink="/settings" routerLinkActive="active-link">Settings</a> -->
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </aside>
+  <!-- END MENU SIDEBAR-->
+
+  <!-- PAGE CONTAINER-->
+  <div class="page-container">
+    <!-- HEADER DESKTOP-->
+    <header class="header-desktop">
+      <div class="section-content section-content-p30">
+        <div class="container-fluid">
+          <div class="header-wrap">
+            <!-- <form class="form-header" onsubmit="return false;" method="GET">
+              <input class="au-input au-input-xl" type="text" name="search" placeholder="Search for item ..." />
+              <button class="au-btn-submit" type="submit">
+                Search
+              </button>
+            </form> -->
+            <div class="col-sm-8" id="login-box">
+              
+              <h5 *ngIf="userType == 0" class="d-inline-block user-status">User Not Logged in</h5>
+              <h5 *ngIf="userType == 1" class="d-inline-block user-status">{{loggedUser}} (Administrator)</h5>
+              <h5 *ngIf="userType == 2" class="d-inline-block user-status">{{loggedUser}} (Employee)</h5>
+              <h5 *ngIf="userType == 3" class="d-inline-block user-status">{{loggedUser}} (Customer)</h5>
+              <h5 *ngIf="currentUser=='employee'" class="d-inline-block">employeeUser</h5>
+              <button *ngIf="userType != 0" type="button" class="btn btn-warning inline" (click)="logout();" routerLink="/login" >Log out</button>
+              
+              <!-- <button *ngIf="userType==0" type="button" class="btn btn-success inline">Login</button> -->
+              <!-- <button type="button" class="btn btn-success inline">user=0</button> -->
+              <!-- <button type="button" class="btn btn-success inline" (click)="loginAsAdmin()">Login as Admin</button>
+              <button type="button" class="btn btn-success inline" (click)="loginAsEmployee()">Login as Employee</button>
+              <button type="button" class="btn btn-success inline" (click)="loginAsCustomer()">Login as Customer</button>
+              <button *ngIf="userType != 0" type="button" class="btn btn-warning inline" (click)="logout()" >Log out</button> -->
+            </div>
+            
+
+          </div>
+          <div class="account-wrap"></div>
+        </div>
+      </div>
+    </header>
+    <!-- END HEADER DESKTOP-->
+
+
+    <!-- MAIN CONTENT-->
+    <div *ngIf="currentUser=='employee' || currentUser=='admin'">
+
+      <!-- <app-store-list></app-store-list> -->
+      <router-outlet></router-outlet>
+    </div>
+
+    <div *ngIf="currentUser=='none'">
+
+      <!-- <app-store-list></app-store-list> -->
+      <app-login></app-login>
+    </div>
+  </div>
+  
+</div>
+
+
+<!-- <footer>
+  <small>Copyright &copy; 2021, Team037 GaTech-OMSCS-CS6310-21Fall</small>
+</footer> -->

@@ -1,0 +1,16 @@
+{
+    "msg": "success",
+    "code": 200,
+    "items": [
+        {
+            "storeName": "kroger",
+            "itemName": "pot_roast",
+            "weight": 30000
+        },
+        {
+            "storeName": "kroger",
+            "itemName": "beer",
+            "weight": 20000
+        }
+    ]
+}

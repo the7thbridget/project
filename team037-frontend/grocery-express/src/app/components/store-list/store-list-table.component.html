@@ -1,0 +1,21 @@
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+
+        <thead class="thead-light">
+            <tr>
+                <th>Name</th>
+                <th>Revenue</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let thisStore of stores">
+                <td>{{ thisStore.store_name }}</td>
+                <td>{{ thisStore.revenue }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<!-- <p *ngFor="let thisStore of stores">
+    {{ thisStore.store_name }}: {{ thisStore.revenue}}
+</p> -->

@@ -1,0 +1,7 @@
+button.admin {
+  margin-bottom: 5px;
+}
+
+div.modal div.modal-backdrop {
+  z-index: 0;
+}

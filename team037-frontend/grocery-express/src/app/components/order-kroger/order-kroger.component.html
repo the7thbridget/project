@@ -1,0 +1,310 @@
+<div class="main-content">
+
+  <div *ngIf="showDetails==false" class="section-content-p30">
+    <h1 class="mt-3 mb-3">{{storeName}} Orders</h1>
+    <div class="container-fluid">
+      <!-- <button type="button" class="btn btn-primary admin" routerLink="/items">Add order</button> -->
+      <button type="button" class="btn btn-primary admin" routerLink="/stores" routerLinkActive="active-link">Back
+        to store list</button>
+
+      <!-- Button trigger modal -->
+      <button type="button" class="btn btn-primary admin title-divider" data-bs-toggle="modal"
+        data-bs-target="#staticBackdrop" (click)="errCode=0;errMsg=''">
+        Add Order
+      </button>
+
+      <!-- Modal -->
+      <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Add Order</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form #newOrderForm="ngForm" (submit)="addOrder(newOrderForm)">
+                <!-- [formGroup]="addOrderForm"-->
+                <div>
+                  <label for="recipient-name" class="col-form-label">Order Name</label>
+                  <input type="text" class="form-control" name="orderName" ngModel>
+                </div>
+                <div class="mb-1">
+                  <label for="message-text" class="col-form-label">Drone Identifier</label>
+                  <input type="text" class="form-control" name="droneIdentifier" ngModel>
+                </div>
+                <div class="mb-3">
+                  <label for="message-text" class="col-form-label">Customer Username</label>
+                  <input type="text" class="form-control" name="customerUsername" ngModel>
+                </div>
+                <div class="modal-footer">
+                  <div *ngIf="errCode!=200 && errCode!=0 && showAddOrder" class="alert alert-danger" role="alert">
+                    Order not added! {{errMsg}}
+                  </div>
+                  <div *ngIf="errCode==200 && showAddOrder" class="alert alert-success" role="alert">
+                    Order has been added!
+                  </div>
+                  <!-- <p *ngIf="errCode!=200 && errCode!=0" style="color:red;font-size:200%;">Error! {{errMsg}}</p> -->
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                    (click)="resetForm(newOrderForm)">Close</button>
+                  <button type="button" class="btn btn-primary" type="submit">Add New Order</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+
+        <!-- TOGGLE SWITCHES -->
+        <div class="container-xxl toggle-box">
+          <form #dataViewForm="ngForm" (submit)="updateView(dataViewForm)">
+            <div class="form-check form-switch one-line">
+              <!--Two-way data binding by [(ngModel)]-->
+              <input *ngIf="showCurrentData" class="form-check-input" type="checkbox" role="switch"
+                id="flexSwitchCheckChecked" checked name="currentData" [(ngModel)]="showCurrentData">
+              <input *ngIf="!showCurrentData" class="form-check-input" type="checkbox" role="switch"
+                id="flexSwitchCheckChecked" name="currentData" [(ngModel)]="showCurrentData">
+              <label class="form-check-label" for="flexSwitchCheckChecked">Show current data</label>
+            </div>
+            <div class="form-check form-switch one-line">
+              <input *ngIf="showArchiveData" class="form-check-input" type="checkbox" role="switch"
+                id="flexSwitchCheckDefault" checked name="archivedData" [(ngModel)]="showArchiveData">
+              <input *ngIf="!showArchiveData" class="form-check-input" type="checkbox" role="switch"
+                id="flexSwitchCheckDefault" name="archivedData" [(ngModel)]="showArchiveData">
+              <label class="form-check-label" for="flexSwitchCheckDefault">Show archived data</label>
+            </div>
+            <!-- <button type="button" class="btn btn-primary" type="submit">Request Data</button> -->
+          </form>
+        </div>
+
+        
+        <!-- LOADER -->
+        <h1 *ngIf="hideloader==false"> Loading Data... </h1>
+
+
+        <!--MAIN TABLE 1 : CURRENT DATA-->
+        <h3 *ngIf="showCurrentData==true" class="mt-3 mb-3 title-divider data-view">Current Data</h3>
+        <table *ngIf="showCurrentData==true" class="table table-striped table-hover">
+
+          <thead class="thead-light">
+            <tr>
+              <th>Order Name</th>
+              <th>Order ID</th>
+              <th>Drone ID</th>
+              <th>Customer ID</th>
+              <th>Close date</th>
+              <th>Create date</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let thisOrder of currentOrders">
+              <td>{{ thisOrder.order_name }}</td>
+              <td>{{ thisOrder.order_id }}</td>
+              <!-- /api/order/request -->
+              <td>{{ thisOrder.drone_id }}
+                <button type="button" class="btn btn-outline-primary inline" data-bs-toggle="modal"  *ngIf="thisOrder.status==0">
+                  Reassign Drone
+                </button>
+              </td>
+              <td>{{ thisOrder.customer_id }}</td>
+              <td>{{ thisOrder.close_date }}</td>
+              <td>{{ thisOrder.create_date }}</td>
+              <td *ngIf="thisOrder.status==0">Pending</td>
+              <td *ngIf="thisOrder.status==1">Completed</td>
+              <td *ngIf="thisOrder.status==2">Canceled</td>
+              <td><button type="button" class="btn btn-primary"
+                  (click)="setCurrentOrder(thisOrder.order_id); setCurrentViewDetails(); showCancelMsg = false; showCheckoutMsg = false; errCode=0;errMsg=''; calculateCurrentOrder();">View
+                  Details</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!--MAIN TABLE 2 : ARCHIVED DATA-->
+        <h3 *ngIf="showArchiveData==true" class="mt-3 mb-3 title-divider data-view">Archived Data</h3>
+        <table *ngIf="showArchiveData==true" class="table table-striped table-hover">
+
+          <thead class="thead-light">
+            <tr>
+              <th>Order Name</th>
+              <th>Order ID</th>
+              <th>Drone ID</th>
+              <th>Customer ID</th>
+              <th>Close date</th>
+              <th>Create date</th>
+              <th>Archived date</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let thisOrder of archivedOrders">
+              <td>{{ thisOrder.order_name }}</td>
+              <td>{{ thisOrder.archive_order_id }}</td>
+              <!-- /api/order/request -->
+              <td>{{ thisOrder.drone_id }}
+              </td>
+              <td>{{ thisOrder.customer_id }}</td>
+              <td>{{ thisOrder.close_date }}</td>
+              <td>{{ thisOrder.create_date }}</td>
+              <td>{{ thisOrder.archived_date }}</td>
+              <td *ngIf="thisOrder.status==0">Pending</td>
+              <td *ngIf="thisOrder.status==1">Completed</td>
+              <td *ngIf="thisOrder.status==2">Canceled</td>
+              <td><button type="button" class="btn btn-primary"
+                (click)="setCurrentOrder(thisOrder.archive_order_id); seArchivedViewDetails(); showCancelMsg = false; showCheckoutMsg = false; errCode=0;errMsg='';calculateArchiveOrder();">View Details</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TABLE 3: CURRENT ORDER DETAILS -->
+  <div *ngIf="showCurrentDetails==true && showCurrentData==true" class="section-content-p30">
+    <h1 class="mt-3 mb-3">{{storeName}} Order Details</h1>
+    <div class="container-fluid">
+
+
+      <!--FIND ORDER DETAILS BY ORDER ID-->
+      <div *ngFor="let thisOrder of currentOrders">
+        <div *ngIf="thisOrder.order_id==currentOrderId">
+
+          <button type="button" class="btn btn-primary admin" (click)="reloadComponent();"
+            routerLinkActive="active-link">Back
+            to order list</button>
+          <button type="button" class="btn btn-primary admin" (click)="sendCurrentStore(storeName)">
+            Add Items
+          </button>
+
+          <ul>
+            <li class="text-left">Order Name: {{thisOrder.order_name}}</li>
+            <li class="text-left">Customer ID: {{thisOrder.customer_id}}</li>
+            <li class="text-left">Creation Date: {{thisOrder.create_date}}</li>
+            <li class="text-left" *ngIf="thisOrder.status==0">Status: Pending</li>
+            <li class="text-left" *ngIf="thisOrder.status==1">Status: Completed</li>
+            <li class="text-left" *ngIf="thisOrder.status==2">Status: Canceled</li>
+          </ul>
+
+          <div>
+
+            <!--ORDER DETAILS TABLE -->
+            <table class="table table-striped table-hover">
+
+              <thead class="thead-light">
+                <tr>
+                  <th>Item Name</th>
+                  <th>Quantity</th>
+                  <th>Total Price</th>
+                  <th>Total Weight</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let thisOrderDetail of thisOrder.items">
+                  <td>{{ thisOrderDetail.item_name }}</td>
+                  <td>{{ thisOrderDetail.quantity }}</td>
+                  <td>{{ thisOrderDetail.total_price }}</td>
+                  <td>{{ thisOrderDetail.total_weight }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <h3> Order Total Price: {{thisOrderTotalPrice}}</h3>
+            <h3> Order Total Weight: {{thisOrderTotalWeight}}</h3>
+          </div>
+          <div>
+            <div *ngIf="showCancelMsg && errCode!=200 && errCode!=0" class="alert alert-danger" role="alert">
+              Order is not deleted! {{errMsg}}
+            </div>
+            <div *ngIf="showCancelMsg && errCode==200" class="alert alert-success" role="alert">
+              Order has been cancelled!
+            </div>
+
+            <div *ngIf="showCheckoutMsg && errCode!=200 && errCode!=0" class="alert alert-danger" role="alert">
+              Order is not checked out! {{errMsg}}
+            </div>
+            <div *ngIf="showCheckoutMsg && errCode==200" class="alert alert-success" role="alert">
+              Order has been checked out!
+            </div>
+
+            <button type="button" class="btn btn-success title-divider"
+              (click)="checkoutOrder(storeName, thisOrder.order_name)">
+              Check Out
+            </button>
+            <button type="button" class="btn btn-danger title-divider"
+              (click)="cancelOrder(storeName, thisOrder.order_name)">
+              Cancel Order
+            </button>
+          </div>
+        </div>
+        <!-- <div *ngFor="let thisOrderDetail of thisOrder.items">
+          <div *ngIf="thisOrder.order_id==0"></div>
+        </div> -->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE 4: ARCHIVED ORDER DETAILS -->
+  <div *ngIf="showArchivedDetails==true && showArchiveData==true" class="section-content-p30">
+    <h1 class="mt-3 mb-3">{{storeName}} Order Details</h1>
+    <div class="container-fluid">
+
+
+      <!--FIND ORDER DETAILS BY ORDER ID-->
+      <div *ngFor="let thisOrder of archivedOrders">
+        <div *ngIf="thisOrder.archive_order_id==currentOrderId">
+
+          <button type="button" class="btn btn-primary admin" (click)="reloadComponent()"
+            routerLinkActive="active-link">Back
+            to order list</button>
+
+          <ul>
+            <li class="text-left">Order Name: {{thisOrder.order_name}}</li>
+            <li class="text-left">Customer ID: {{thisOrder.customer_id}}</li>
+            <li class="text-left">Creation Date: {{thisOrder.create_date}}</li>
+            <li class="text-left">Archived Date: {{thisOrder.archived_date}}</li>
+            <li class="text-left">Status: {{thisOrder.status}}</li>
+          </ul>
+
+          <div>
+
+            <!--ORDER DETAILS TABLE -->
+            <table class="table table-striped table-hover">
+
+              <thead class="thead-light">
+                <tr>
+                  <th>Item Name</th>
+                  <th>Quantity</th>
+                  <th>Total Price</th>
+                  <th>Total Weight</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let thisOrderDetail of thisOrder.items">
+                  <td>{{ thisOrderDetail.item_name }}</td>
+                  <td>{{ thisOrderDetail.quantity }}</td>
+                  <td>{{ thisOrderDetail.total_price }}</td>
+                  <td>{{ thisOrderDetail.total_weight }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <h3> Order Total Price: {{thisOrderTotalPrice}}</h3>
+            <h3> Order Total Weight: {{thisOrderTotalWeight}}</h3>
+          </div>
+        </div>
+        <!-- <div *ngFor="let thisOrderDetail of thisOrder.items">
+          <div *ngIf="thisOrder.order_id==0"></div>
+        </div> -->
+
+      </div>
+    </div>
+  </div>
+</div>

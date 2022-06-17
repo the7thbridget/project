@@ -1,0 +1,143 @@
+<div class="main-content">
+
+  <div class="section-content-p30">
+    <h1 class="mt-3 mb-3"> {{storeName}} Drones</h1>
+    <!-- Button trigger modal -->
+    <button *ngIf="loggedInType == '1' || loggedInType == '2'"  type="button" class="btn btn-primary title-divider" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+      Add Drone
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+      aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Add Drone</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form #newDroneForm="ngForm" (submit)="addDrone(newDroneForm)">
+              <div>
+                <label for="recipient-name" class="col-form-label">Drone Identifier</label>
+                <input type="text" class="form-control" name="droneIdentifier" ngModel>
+              </div>
+              <div class="mb-1">
+                <label for="message-text" class="col-form-label">Max Capacity</label>
+                <input type="text" class="form-control" name="maxCapacity" ngModel>
+              </div>
+              <div class="mb-3">
+                <label for="message-text" class="col-form-label">Max Trip</label>
+                <input type="text" class="form-control" name="maxTrip" ngModel>
+              </div>
+
+              <div class="modal-footer">
+                <div *ngIf="errCode!=200 && errCode!=0" class="alert alert-danger" role="alert">
+                  Drone not added! {{errMsg}}
+                </div>
+                <div *ngIf="errCode==200" class="alert alert-success" role="alert">
+                  Drone has been added!
+                </div>
+                <!-- <p *ngIf="errCode!=200 && errCode!=0" style="color:red;font-size:200%;">Error! {{errMsg}}</p> -->
+
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                  (click)="resetForm(newDroneForm);sendCurrentStore( storeName )">Close</button>
+
+                <button type="button" class="btn btn-primary" type="submit">Add New Drone</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-primary title-divider" routerLink="/stores" routerLinkActive="active-link">Back
+      to store list</button>
+
+    <div class="container-fluid">
+
+        <!-- LOADER -->
+        <h1 *ngIf="hideloader==false"> Loading Data... </h1>
+
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+
+          <thead class="thead-light">
+            <tr>
+              <th>Drone identifier</th>
+              <th>Pilot name</th>
+              <th>Store ID</th>
+              <th>Max Capacity</th>
+              <th>Remaining Capacity</th>
+              <th>Remaining Trip</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let thisDrone of drones">
+              <td>{{ thisDrone.drone_identifier }}</td>
+              <td>
+                <button *ngIf="loggedInType == '1' || loggedInType == '2'" type="button" class="btn btn-outline-primary inline" data-bs-toggle="modal"
+                  data-bs-target="#flydrone" (click)="setThisDroneIdentifier(thisDrone.drone_identifier)">
+                  Fly Drone
+                </button>
+                {{ thisDrone.flownBy }}
+                <!-- Modal -->
+                <div class="modal fade" id="flydrone" data-bs-backdrop="static" data-bs-keyboard="false"
+                  tabindex="-1" aria-labelledby="changeRatingLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+
+                      <div class="modal-header">
+
+                        <h5 class="modal-title" id="changeRatingLabel">
+                          Fly Drone
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form #newPilotForm="ngForm" (submit)="flyDrone(newPilotForm)">
+                          <div class="mb-3">
+                            <label for="message-text" class="col-form-label">
+                              Pilot Account
+                            </label>
+                            <input type="text" class="form-control" id="message-name" name="pilotAccount" ngModel>
+                          </div>
+                          <div class="modal-footer">
+                            <!-- Alert Message -->
+                            <div *ngIf="errCode!=200 && errCode!=0" class="alert alert-danger" role="alert">
+                              Drone is not assigned! {{errMsg}}
+                            </div>
+                            <div *ngIf="errCode==200" class="alert alert-success" role="alert">
+                              Drone is assigned.
+                            </div>
+
+                            <!-- Buttons -->
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="resetForm(newPilotForm); reloadComponent()">Close</button>
+                            <button type="button" class="btn btn-primary" type="submit">Assign Drone</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>{{ thisDrone.store_id }}</td>
+              <td>{{ thisDrone.max_capacity }}</td>
+              <td>{{ thisDrone.remainingCap }}</td>
+              <td>{{ thisDrone.remaining_trip }}</td>
+              <td><button type="button" class="btn btn-outline-primary inline">
+                  Maintain Drone
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+
+    </div>
+
+  </div>
+</div>
